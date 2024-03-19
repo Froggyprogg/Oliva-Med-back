@@ -34,6 +34,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'Auth',
+    'QA_Block',
     'channels',
     'django.contrib.admin',
     'django.contrib.auth',

@@ -40,10 +40,10 @@ class UserManager(BaseUserManager):
 
 class User(AbstractUser):
     # TODO:Решить проблему с необходимостью вводить Username при создании пользователя
-    surname = models.CharField(help_text="Введите фамилию",
+    last_name = models.CharField(help_text="Введите фамилию",
                                verbose_name="Фамилия",
                                max_length=50)
-    name = models.CharField(help_text="Введите имя",
+    first_name = models.CharField(help_text="Введите имя",
                             verbose_name="Имя",
                             max_length=50)
     middlename = models.CharField(help_text="Введите Отчество(если есть)",
@@ -53,19 +53,19 @@ class User(AbstractUser):
                                     help_text="Введите номер телефона",
                                     verbose_name="Номер телефона",
                                     unique=True)
-    email = models.EmailField(help_text="Введите электронную почту",
+    username = models.EmailField(help_text="Введите электронную почту",
                               verbose_name="Электронная почта",
                               max_length=50,
                               unique=True, )
     sex = models.CharField(max_length=1,
                            help_text="Введите Пол",
                            verbose_name="Пол")
-    # TODO: Нужно решить проблему с сохранением пароля, нужносохранять хэш
+    # TODO: Нужно решить проблему с сохранением пароля, нужно сохранять хэш
     password = models.CharField(max_length=128,
                                 help_text="Введите пароль",
                                 verbose_name="Пароль")
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['surname', 'name', 'phone_number']
+    EMAIL_FIELD = None
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'phone_number']
     objects = UserManager()
 
     @property
