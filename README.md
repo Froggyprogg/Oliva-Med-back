@@ -13,3 +13,7 @@
 ```
  pip install -r requirements.txt
 ```
+Что бы создать суперпользователя, введите:</b>):
+```
+ python manage.py createsuperuser
+```

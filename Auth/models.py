@@ -39,7 +39,6 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractUser):
-    # TODO:Решить проблему с необходимостью вводить Username при создании пользователя
     last_name = models.CharField(help_text="Введите фамилию",
                                verbose_name="Фамилия",
                                max_length=50)
@@ -64,7 +63,6 @@ class User(AbstractUser):
     password = models.CharField(max_length=128,
                                 help_text="Введите пароль",
                                 verbose_name="Пароль")
-    EMAIL_FIELD = None
     REQUIRED_FIELDS = ['first_name', 'last_name', 'phone_number']
     objects = UserManager()
 
