@@ -63,7 +63,7 @@ class User(AbstractUser):
     password = models.CharField(max_length=128,
                                 help_text="Введите пароль",
                                 verbose_name="Пароль")
-    REQUIRED_FIELDS = ['first_name', 'last_name', 'phone_number']
+    #REQUIRED_FIELDS = ['first_name', 'last_name', 'phone_number']
     objects = UserManager()
 
     @property

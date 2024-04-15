@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 import datetime
+import os
 from pathlib import Path
 import django
 from django.utils.translation import gettext
@@ -35,7 +36,9 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'Auth',
     'QA_Block',
+    'Chat',
     'channels',
+    "daphne",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -56,10 +59,12 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'OlivaMed.urls'
 
+TEMPLATE_DIR = os.path.join(BASE_DIR,"template")
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [TEMPLATE_DIR],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -73,6 +78,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'OlivaMed.wsgi.application'
+ASGI_APPLICATION = 'OlivaMed.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -142,3 +148,12 @@ JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=3000),
     'JWT_AUTH_HEADER_PREFIX': 'Oliva',
 }
+
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
+
+LOGIN_REDIRECT_URL ="chat-page"

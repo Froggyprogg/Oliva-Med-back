@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.utils.text import slugify
 
+# FIXME: При удалении вопроса, ответ остается
 
 class UserQAProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=False, blank=True, primary_key=True)
@@ -28,7 +29,7 @@ class Question(models.Model):
     def __str__(self):
         return self.title
 
-#FIXME: Не создается модель
+
 class Answer(models.Model):
     question = models.ForeignKey(Question, on_delete=models.SET_NULL, null=True, blank=True,)
     answer_text = models.TextField(help_text="Введите Ответ",
