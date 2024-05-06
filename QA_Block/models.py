@@ -28,14 +28,13 @@ class Question(models.Model):
     def __str__(self):
         return self.title
 
-#FIXME: Не создается модель
+
 class Answer(models.Model):
     question = models.ForeignKey(Question, on_delete=models.SET_NULL, null=True, blank=True,)
     answer_text = models.TextField(help_text="Введите Ответ",
                                    verbose_name="Ответ",
                                    default="Ответ")
-    pub_date = models.DateTimeField('date published', auto_now_add=True)
-    updated = models.DateTimeField('date updated', auto_now=True)
+    pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     answer = models.BooleanField(default=False)
 

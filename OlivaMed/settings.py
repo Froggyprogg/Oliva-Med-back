@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'Oliva_pages',
     'Auth',
     'QA_Block',
     'channels',
