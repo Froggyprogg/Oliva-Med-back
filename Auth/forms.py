@@ -40,7 +40,12 @@ class UserCreationForm(UserCreationForm):
         user = User.objects.create_user(
             self.cleaned_data['username'],
             self.cleaned_data['email'],
-            self.cleaned_data['password1']
+            self.cleaned_data['password1'],
+            self.cleaned_data['surname'],
+            self.cleaned_data['name'],
+            self.cleaned_data['middlename'],
+            self.cleaned_data['sex'],
+            self.cleaned_data['phone_number']
         )
         return user
 

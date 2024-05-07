@@ -39,7 +39,7 @@ class Doctor(models.Model):
                                     unique=True)
     sex = models.CharField(max_length=1,
                            verbose_name="Пол")
-    main_photo = models.FileField(verbose_name="Главное фото", upload_to="files/doctor")
+    main_photo = models.FileField(verbose_name="Главное фото", upload_to="media/photo/doctor")
     # education_photo
     # files
     # video
@@ -58,7 +58,7 @@ class DoctorReview(models.Model):
 class News(models.Model):
     title = models.CharField(verbose_name="Заголовок")
     pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
-    photo = models.FileField(verbose_name="Фото", upload_to="files/news")
+    photo = models.FileField(verbose_name="Фото", upload_to="media/photo/news")
     text = models.TextField(verbose_name="Текст новости")
     likes = models.IntegerField(verbose_name="Лайки", default=0)
 
@@ -69,3 +69,8 @@ class News(models.Model):
 class NewsReview(models.Model):
     news = models.ForeignKey(News, on_delete=models.SET_NULL, null=True, blank=True)
     review = models.ForeignKey(Review, on_delete=models.SET_NULL, null=True, blank=True)
+
+
+class CalendarEvents(models.Model):
+    date = models.DateTimeField(verbose_name='Дата события')
+    description = models.CharField(verbose_name='Описание события')
