@@ -1,5 +1,4 @@
 from django.db import models
-
 from OlivaMed import settings
 
 
@@ -47,7 +46,11 @@ class Doctor(models.Model):
     medical_service = models.ForeignKey(MedicalService, on_delete=models.SET_NULL, null=True, blank=True)
 
     def save(self, *args, **kwargs):
-        super(Doctor, self).save(*args, **kwargs)
+        super(Doctor, self).save(*args, **kwargs) #TODO: Надо чтобы шорткат создавался с моделью
+
+
+class DoctorShortcut(models.Model): #TODO: ПОМЕНЯТЬ
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
 
 
 class DoctorReview(models.Model):
@@ -64,6 +67,10 @@ class News(models.Model):
 
     def save(self, *args, **kwargs):
         super(News, self).save(*args, **kwargs)
+
+
+class NewsShortcut(models.Model): #TODO: ПОМЕНЯТЬ
+    news = models.ForeignKey(News, on_delete=models.CASCADE)
 
 
 class NewsReview(models.Model):
