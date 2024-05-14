@@ -17,3 +17,11 @@
 ```
  python manage.py createsuperuser
 ```
+
+```
+docker compose up -d --build 
+```
+
+```
+docker compose exec web python manage.py createsuperuser
+```
