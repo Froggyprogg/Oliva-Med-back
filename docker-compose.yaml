@@ -1,6 +1,6 @@
 services:
   web:
-    build: . #TODO: брать образ с dockerhub
+    image: froggyprogg/oliva-med-back
     command: python manage.py runserver 0.0.0.0:8000
 #    volumes:
 #      - ./app/:/usr/src/app/
