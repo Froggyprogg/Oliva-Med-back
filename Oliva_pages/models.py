@@ -3,15 +3,15 @@ from OlivaMed import settings
 
 
 class Review(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     title = models.TextField(help_text="Введите заголовок",
                              verbose_name="Заголовок")
     review_text = models.TextField(help_text="Введите свой отзыв",
                                    verbose_name="Отзыв")
     pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
-
     def save(self, *args, **kwargs):
         super(Review, self).save(*args, **kwargs)
+
 
 
 class MedicalService(models.Model):

@@ -5,7 +5,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import Question
-from .forms import QuestionForm
 from .serializers import QuestionSerializer
 
 

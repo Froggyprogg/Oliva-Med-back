@@ -23,6 +23,7 @@ from rest_framework_simplejwt.views import (
 )
 
 from QA_Block.views import QuestionCreateView
+from Oliva_pages.views import ReviewCreateView, ReviewListView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,6 +31,10 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('question', qa_views.list_questions, name='list_questions'),
-    path("api/questions/create", QuestionCreateView.as_view(), name="create_question")
-
+    path("api/questions/create", QuestionCreateView.as_view(), name="create_question"),
+    path("api/reviews/create", ReviewCreateView.as_view(),naem="create_review"),
+    path("api/reviews/list", ReviewListView.as_view(),naem="create_review"),
 ]
+
+admin.site.site_header = 'Oliva-Med Admin Panel'
+admin.site.site_title = 'Oliva-Med'
