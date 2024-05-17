@@ -1,7 +1,12 @@
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from .models import Question
 from .forms import QuestionForm
+from .serializers import QuestionSerializer
 
 
 def list_questions(request):
@@ -10,18 +15,10 @@ def list_questions(request):
     return render(request, "path_to/file.html", args)
 
 
-def add_question(request: HttpRequest) -> HttpResponse:
-    if request.method == "POST":
-        form = QuestionForm(data=request.POST, files=request.FILES)
-
-        if form.is_valid():
-            form.save()
-
-            return redirect("questions_list") #TODO: Редирект на реальный url
-
-    else:
-        form = QuestionForm()
-
-    context = {"form": form, "edit_mode":False}
-
-    return render(request, "path_to/file.html", context) #TODO: Путь к реальному файлу html
+class QuestionCreateView(APIView):
+    def post(self, request):
+        serializer = QuestionSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
