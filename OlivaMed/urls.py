@@ -32,8 +32,8 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('question', qa_views.list_questions, name='list_questions'),
     path("api/questions/create", QuestionCreateView.as_view(), name="create_question"),
-    path("api/reviews/create", ReviewCreateView.as_view(),naem="create_review"),
-    path("api/reviews/list", ReviewListView.as_view(),naem="create_review"),
+    path("api/reviews/create", ReviewCreateView.as_view(),name="create_review"),
+    path("api/reviews/list", ReviewListView.as_view(),name="create_review"),
 ]
 
 admin.site.site_header = 'Oliva-Med Admin Panel'
