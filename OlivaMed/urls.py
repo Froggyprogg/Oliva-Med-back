@@ -16,24 +16,24 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from QA_Block import views as qa_views
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
 
-from QA_Block.views import QuestionCreateView
-from Oliva_pages.views import ReviewCreateView, ReviewListView
+from QA_Block.views import QuestionCreateView, QuestionsListView, QuestionDetailView
+from Oliva_pages.views import ReviewCreateView, ReviewsListView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('user/', include('Auth.urls')),
+    path('api/user/', include('Auth.urls')),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('question', qa_views.list_questions, name='list_questions'),
+    path('api/questions', QuestionsListView.as_view(), name='list_questions'),
     path("api/questions/create", QuestionCreateView.as_view(), name="create_question"),
+    path("api/questions/<slug:slug>/", QuestionDetailView.as_view(), name="question_detail"),
     path("api/reviews/create", ReviewCreateView.as_view(),name="create_review"),
-    path("api/reviews/list", ReviewListView.as_view(),name="create_review"),
+    path("api/reviews/list", ReviewsListView.as_view(),name="create_review"),
 ]
 
 admin.site.site_header = 'Oliva-Med Admin Panel'
