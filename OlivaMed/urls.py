@@ -22,19 +22,24 @@ from rest_framework_simplejwt.views import (
 )
 
 from QA_Block.views import QuestionCreateView, QuestionsListView, QuestionDetailView
-from Oliva_pages.views import ReviewCreateView, ReviewsListView
+from Oliva_pages.views import ReviewCreateView, ReviewsListView, WorkScheduleListView, AppointmentCreateView, \
+    WorkScheduleListViewWithFilter, AppointmentCreateViewWithFilter
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/user/', include('Auth.urls')),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/questions', QuestionsListView.as_view(), name='list_questions'),
+    path('api/questions/', QuestionsListView.as_view(), name='list_questions'),
     path("api/questions/create", QuestionCreateView.as_view(), name="create_question"),
     path("api/questions/<slug:slug>/", QuestionDetailView.as_view(), name="question_detail"),
-    path("api/reviews/create", ReviewCreateView.as_view(),name="create_review"),
+    path("api/reviews/create", ReviewCreateView.as_view(),name="create_review"), #TODO: доработать функцию создния
     path("api/reviews/list", ReviewsListView.as_view(),name="create_review"),
+    path("api/work-schedule/", WorkScheduleListView.as_view(), name="work_schedule_list"),
+    path("api/appointments/", AppointmentCreateView.as_view(), name="appointment_create"),
+    path("api/work-schedule-filter/", WorkScheduleListViewWithFilter.as_view(), name="work_schedule_list_filter"),
+    path("api/appointments-filter/", AppointmentCreateViewWithFilter.as_view(), name="appointment_create_filter"),
 ]
 
-admin.site.site_header = 'Oliva-Med Admin Panel'
-admin.site.site_title = 'Oliva-Med'
+admin.site.site_header = 'Админ-панель Олива-Мед'
+admin.site.site_title = 'Олива-Мед'

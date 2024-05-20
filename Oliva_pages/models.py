@@ -40,16 +40,28 @@ class Doctor(models.Model):
                            verbose_name="Пол")
     main_photo = models.FileField(verbose_name="Главное фото", upload_to="media/photo/doctor")
     # education_photo
-    # files
+    # files             TODO: ВСЕ ТРИ ПОЛЯ - ОТДЕЛЬНЫЕ МОДЕЛИ
     # video
-    # key to priem
     medical_service = models.ForeignKey(MedicalService, on_delete=models.SET_NULL, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         super(Doctor, self).save(*args, **kwargs) #TODO: Надо чтобы шорткат создавался с моделью
 
+class WorkSchedule(models.Model):
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, related_name='work_schedule')
+    date = models.DateField(verbose_name='Дата')
+    start_time = models.TimeField(verbose_name='Время начала')
+    end_time = models.TimeField(verbose_name='Время окончания')
+    is_available = models.BooleanField(default=True, verbose_name='Доступен для записи')
 
-class DoctorShortcut(models.Model): #TODO: ПОМЕНЯТЬ
+    class Meta:
+        unique_together = ('doctor', 'date', 'start_time', 'end_time')
+    def __str__(self):
+        return f"{self.doctor.first_name} {self.doctor.last_name} - {self.date} ({self.start_time} - {self.end_time})"
+    def save(self, *args, **kwargs):
+        super(WorkSchedule, self).save(*args, **kwargs)
+
+class DoctorShortcut(models.Model):
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
 
 
@@ -58,26 +70,26 @@ class DoctorReview(models.Model):
     doctor = models.ForeignKey(Doctor, on_delete=models.SET_NULL, null=True, blank=True)
 
 
-class News(models.Model):
-    title = models.CharField(verbose_name="Заголовок")
-    pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
-    photo = models.FileField(verbose_name="Фото", upload_to="media/photo/news")
-    text = models.TextField(verbose_name="Текст новости")
-    likes = models.IntegerField(verbose_name="Лайки", default=0)
-
-    def save(self, *args, **kwargs):
-        super(News, self).save(*args, **kwargs)
-
-
-class NewsShortcut(models.Model): #TODO: ПОМЕНЯТЬ
-    news = models.ForeignKey(News, on_delete=models.CASCADE)
+# class News(models.Model):
+#     title = models.CharField(verbose_name="Заголовок")
+#     pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
+#     photo = models.FileField(verbose_name="Фото", upload_to="media/photo/news")
+#     text = models.TextField(verbose_name="Текст новости")
+#     likes = models.IntegerField(verbose_name="Лайки", default=0)
+#
+#     def save(self, *args, **kwargs):
+#         super(News, self).save(*args, **kwargs)
 
 
-class NewsReview(models.Model):
-    news = models.ForeignKey(News, on_delete=models.SET_NULL, null=True, blank=True)
-    review = models.ForeignKey(Review, on_delete=models.SET_NULL, null=True, blank=True)
+# class NewsShortcut(models.Model): #TODO: ПОМЕНЯТЬ
+#     news = models.ForeignKey(News, on_delete=models.CASCADE)
+#
+#
+# class NewsReview(models.Model):
+#     news = models.ForeignKey(News, on_delete=models.SET_NULL, null=True, blank=True)
+#     review = models.ForeignKey(Review, on_delete=models.SET_NULL, null=True, blank=True)
 
 
-class CalendarEvents(models.Model):
-    date = models.DateTimeField(verbose_name='Дата события')
-    description = models.CharField(verbose_name='Описание события')
+# class CalendarEvents(models.Model):
+#     date = models.DateTimeField(verbose_name='Дата события')
+#     description = models.CharField(verbose_name='Описание события')
