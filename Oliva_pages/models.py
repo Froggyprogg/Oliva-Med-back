@@ -1,5 +1,6 @@
 from django.db import models
 from OlivaMed import settings
+from django.core.validators import FileExtensionValidator
 
 
 class Review(models.Model):
@@ -9,9 +10,9 @@ class Review(models.Model):
     review_text = models.TextField(help_text="Введите свой отзыв",
                                    verbose_name="Отзыв")
     pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
+
     def save(self, *args, **kwargs):
         super(Review, self).save(*args, **kwargs)
-
 
 
 class MedicalService(models.Model):
@@ -39,13 +40,27 @@ class Doctor(models.Model):
     sex = models.CharField(max_length=1,
                            verbose_name="Пол")
     main_photo = models.FileField(verbose_name="Главное фото", upload_to="media/photo/doctor")
-    # education_photo
-    # files             TODO: ВСЕ ТРИ ПОЛЯ - ОТДЕЛЬНЫЕ МОДЕЛИ
-    # video
     medical_service = models.ForeignKey(MedicalService, on_delete=models.SET_NULL, null=True, blank=True)
 
     def save(self, *args, **kwargs):
-        super(Doctor, self).save(*args, **kwargs) #TODO: Надо чтобы шорткат создавался с моделью
+        super(Doctor, self).save(*args, **kwargs)
+
+
+class Doctor_eduaction_photo(models.Model):
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, related_name='education_photos')
+    photo = models.FileField(verbose_name="Фото образования", upload_to="media/photo/doctor/education")
+
+
+class Doctor_files(models.Model):
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, related_name='files')
+    files = models.FileField(verbose_name="Файлы статьей и т.д", upload_to="media/photo/doctor/files")
+
+
+class Doctor_videos(models.Model):
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, related_name='video')
+    video = models.FileField(verbose_name="Видео", upload_to="media/photo/doctor/videos",
+                             validators=[FileExtensionValidator(allowed_extensions=['mp4'])])
+
 
 class WorkSchedule(models.Model):
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, related_name='work_schedule')
@@ -56,13 +71,12 @@ class WorkSchedule(models.Model):
 
     class Meta:
         unique_together = ('doctor', 'date', 'start_time', 'end_time')
+
     def __str__(self):
         return f"{self.doctor.first_name} {self.doctor.last_name} - {self.date} ({self.start_time} - {self.end_time})"
+
     def save(self, *args, **kwargs):
         super(WorkSchedule, self).save(*args, **kwargs)
-
-class DoctorShortcut(models.Model):
-    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
 
 
 class DoctorReview(models.Model):
@@ -80,11 +94,6 @@ class DoctorReview(models.Model):
 #     def save(self, *args, **kwargs):
 #         super(News, self).save(*args, **kwargs)
 
-
-# class NewsShortcut(models.Model): #TODO: ПОМЕНЯТЬ
-#     news = models.ForeignKey(News, on_delete=models.CASCADE)
-#
-#
 # class NewsReview(models.Model):
 #     news = models.ForeignKey(News, on_delete=models.SET_NULL, null=True, blank=True)
 #     review = models.ForeignKey(Review, on_delete=models.SET_NULL, null=True, blank=True)
