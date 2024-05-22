@@ -81,11 +81,11 @@ WSGI_APPLICATION = 'OlivaMed.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'oliva_med_back',
-        'USER': 'django-admin',
+        'USER': 'django_admin',
         'PASSWORD': 'admin',
-        'HOST': 'db',
+        'HOST': 'postgres',
         'PORT': '5432',
     }
 }

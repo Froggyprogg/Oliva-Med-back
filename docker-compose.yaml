@@ -2,21 +2,19 @@ services:
   web:
     image: froggyprogg/oliva-med-back
     command: python manage.py runserver 0.0.0.0:8000
-#    volumes:
-#      - ./app/:/usr/src/app/
     ports:
       - 8000:8000
     env_file:
       - ./.env.dev
     depends_on:
-      - db
-  db:
+      - postgres
+  postgres:
     image: postgres:16.2-alpine
     volumes:
-      - dbdata:/var/lib/postgresql/data/
+      - psqldata:/var/lib/postgresql/data/
     environment:
       - POSTGRES_USER=django_admin
       - POSTGRES_PASSWORD=admin
       - POSTGRES_DB=oliva_med_back
 volumes:
-  dbdata:
+  psqldata:
