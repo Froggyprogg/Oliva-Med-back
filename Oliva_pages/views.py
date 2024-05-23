@@ -1,14 +1,15 @@
 from django.shortcuts import render, redirect
 from rest_framework import status, generics
-from rest_framework.generics import ListAPIView, CreateAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from Oliva_pages.models import Doctor, MedicalService, Review, WorkSchedule
-from Oliva_pages.serializers import ReviewSerializer, WorkScheduleSerializer
+from Oliva_pages.serializers import ReviewSerializer, WorkScheduleSerializer, DoctorSerializer, MedicalServiceSerializer
 from .serializers import WorkScheduleSerializer
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.exceptions import ValidationError
+
 
 class ReviewCreateView(APIView):
     def post(self, request):
@@ -24,10 +25,14 @@ class ReviewsListView(generics.ListAPIView):
     serializer_class = ReviewSerializer
 
 
-def list_doctors(request):
-    doctors = Doctor.objects.all()
-    args = {'questions': doctors}
-    return render(request, "path_to/file.html", args)
+class DoctorListView(ListAPIView):
+    queryset = Doctor.objects.all()
+    serializer_class = DoctorSerializer
+
+
+class DoctorDetailView(RetrieveAPIView):
+    queryset = Doctor.objects.all()
+    serializer_class = DoctorSerializer
 
 
 class WorkScheduleListView(ListAPIView):
@@ -83,16 +88,13 @@ class AppointmentCreateViewWithFilter(CreateAPIView): # TODO: Возможно �
 # def list_news(request):
 #     news = News.objects.all()
 #     args = {'questions': news}
-#     return render(request, "path_to/file.html", args)
-#
 
-def list_medicalservice(request):
-    service = MedicalService.objects.all()
-    args = {'questions': service}
-    return render(request, "path_to/file.html", args)
+
+class MedicalServiceListView(ListAPIView):
+    queryset = MedicalService.objects.all()
+    serializer_class = MedicalServiceSerializer
 
 
 # def list_calendarevents(request):
 #     events = CalendarEvents.objects.all()
 #     args = {'questions': events}
-#     return render(request, "path_to/file.html", args)

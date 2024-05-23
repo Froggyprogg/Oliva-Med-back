@@ -21,9 +21,10 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
-from QA_Block.views import QuestionCreateView, QuestionsListView, QuestionDetailView
+from QA_Block.views import QuestionCreateView, QuestionsListView, QuestionDetailView, AnswerDetailView
 from Oliva_pages.views import ReviewCreateView, ReviewsListView, WorkScheduleListView, AppointmentCreateView, \
-    WorkScheduleListViewWithFilter, AppointmentCreateViewWithFilter
+    WorkScheduleListViewWithFilter, AppointmentCreateViewWithFilter, DoctorListView, DoctorDetailView, \
+    MedicalServiceListView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -33,6 +34,10 @@ urlpatterns = [
     path('api/questions/', QuestionsListView.as_view(), name='list_questions'),
     path("api/questions/create", QuestionCreateView.as_view(), name="create_question"),
     path("api/questions/<slug:slug>/", QuestionDetailView.as_view(), name="question_detail"),
+    path("api/answer/<str:question>/", AnswerDetailView.as_view(), name="answer_detail"),
+    path('api/medicalservice/', MedicalServiceListView.as_view(), name='medicalservice-list'),
+    path('api/doctors/', DoctorListView.as_view(), name='doctor-list'),
+    path('doctors/<int:pk>/', DoctorDetailView.as_view(), name='doctor-detail'),
     path("api/reviews/create", ReviewCreateView.as_view(),name="create_review"), #TODO: доработать функцию создния
     path("api/reviews/list", ReviewsListView.as_view(),name="create_review"),
     path("api/work-schedule/", WorkScheduleListView.as_view(), name="work_schedule_list"),

@@ -17,6 +17,7 @@ class Review(models.Model):
 
 class MedicalService(models.Model):
     name = models.CharField(verbose_name="Название")
+    price = models.IntegerField(verbose_name="Цена")
 
     def save(self, *args, **kwargs):
         super(MedicalService, self).save(*args, **kwargs)
