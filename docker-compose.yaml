@@ -1,6 +1,6 @@
 services:
   web:
-    image: froggyprogg/oliva-med-back
+    image: docker.io/froggyprogg/oliva-med-back
     command: python manage.py runserver 0.0.0.0:8000
     ports:
       - 8000:8000
