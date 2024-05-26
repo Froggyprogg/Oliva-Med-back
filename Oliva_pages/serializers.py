@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from Oliva_pages.models import Review, WorkSchedule, Doctor, Doctor_eduaction_photo, Doctor_files, Doctor_videos, \
-    MedicalService
+    MedicalService, DoctorReview, Job
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -50,6 +50,11 @@ class Doctor_videosSerializer(serializers.ModelSerializer):
         model = Doctor_videos
         fields = ['video']
 
+# class DoctorReviewSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = DoctorReview
+#         fields = ['name', 'price']
+
 
 class DoctorSerializer(serializers.ModelSerializer):
     education_photos = Doctor_eduaction_photoSerializer(many=True, read_only=True)
@@ -59,3 +64,9 @@ class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Doctor
         fields = ['last_name', 'first_name', 'middlename', 'phone_number', 'sex', 'main_photo', 'medical_service', 'education_photos', 'files', 'video']
+
+
+class JobSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Job
+        fields = ['name', 'description', 'salary']

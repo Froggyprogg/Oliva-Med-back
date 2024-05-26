@@ -3,8 +3,9 @@ from rest_framework import status, generics
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from Oliva_pages.models import Doctor, MedicalService, Review, WorkSchedule
-from Oliva_pages.serializers import ReviewSerializer, WorkScheduleSerializer, DoctorSerializer, MedicalServiceSerializer
+from Oliva_pages.models import Doctor, MedicalService, Review, WorkSchedule, Job
+from Oliva_pages.serializers import ReviewSerializer, WorkScheduleSerializer, DoctorSerializer, \
+    MedicalServiceSerializer, JobSerializer
 from .serializers import WorkScheduleSerializer
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
@@ -98,3 +99,12 @@ class MedicalServiceListView(ListAPIView):
 # def list_calendarevents(request):
 #     events = CalendarEvents.objects.all()
 #     args = {'questions': events}
+
+class JobListView(ListAPIView):
+    queryset = Job.objects.all()
+    serializer_class = JobSerializer
+
+
+class JobDetailView(RetrieveAPIView):
+    queryset = Job.objects.all()
+    serializer_class = JobSerializer

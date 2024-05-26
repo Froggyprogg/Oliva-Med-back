@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Review, WorkSchedule, Doctor_eduaction_photo, Doctor_files, Doctor_videos
+from .models import Review, WorkSchedule, Doctor_eduaction_photo, Doctor_files, Doctor_videos, Job
 from .models import Doctor
 from .models import MedicalService
 from .models import DoctorReview
@@ -13,6 +13,7 @@ admin.site.register(MedicalService)
 admin.site.register(Doctor_eduaction_photo)
 admin.site.register(Doctor_files)
 admin.site.register(Doctor_videos)
+admin.site.register(Job)
 
 admin.site.register(DoctorReview)
 admin.site.register(Medical_Service_Review)

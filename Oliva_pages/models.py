@@ -85,6 +85,11 @@ class DoctorReview(models.Model):
     doctor = models.ForeignKey(Doctor, on_delete=models.SET_NULL, null=True, blank=True)
 
 
+class Job(models.Model):
+    name = models.CharField(verbose_name='Название вакансии')
+    description = models.CharField(verbose_name='Описание')
+    salary = models.IntegerField(verbose_name='Зарплата')
+
 # class News(models.Model):
 #     title = models.CharField(verbose_name="Заголовок")
 #     pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)

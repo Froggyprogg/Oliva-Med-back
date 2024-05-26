@@ -1,76 +1,68 @@
-import jwt
-from django.contrib.auth import user_logged_in
-from django.shortcuts import render
-from rest_framework import status
-from rest_framework.decorators import permission_classes, api_view
-from rest_framework.generics import RetrieveUpdateAPIView
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_jwt.serializers import jwt_payload_handler
-
-from Auth.models import User
-from Auth.serializers import UserSerializer
-from OlivaMed import settings
-
-
-class CreateUserView(APIView):
-    # Allow any user (authenticated or not) to access this url
-    permission_classes = (AllowAny,)
-
-    def POST(self, request):
-        user = request.data
-        serializer = UserSerializer(data=user)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.password_validation import validate_password
+from django.core.mail import send_mail
+from .serializers import UserSerializer, UserProfileSerializer
+from django.contrib.auth.models import User
 
 
-@api_view(['POST'])
-@permission_classes([AllowAny, ])
-def authenticate_user(request):
-    try:
-        email = request.data['email']
-        password = request.data['password']
-        user = User.objects.get(email=email, password=password)
-        if user:
-            try:
-                payload = jwt_payload_handler(user)
-                token = jwt.encode(payload, settings.SECRET_KEY)
-                user_details = {}
-                user_details['name'] = "%s %s" % (
-                    user.first_name, user.last_name)
-                user_details['token'] = token
-                user_logged_in.send(sender=user.__class__,
-                                    request=request, user=user)
-                return Response(user_details, status=status.HTTP_200_OK)
-            except Exception as e:
-                raise e
+class UserCreateView(generics.CreateAPIView):
+    serializer_class = UserProfileSerializer
+
+
+class LoginView(APIView):
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return Response({'message': 'Logged in successfully'}, status=status.HTTP_200_OK)
         else:
-            res = {
-                'error': 'can not authenticate with the given credentials or the account has been deactivated'}
-            return Response(res, status=status.HTTP_403_FORBIDDEN)
-    except KeyError:
-        res = {'error': 'please provide a email and a password'}
-        return Response(res)
+            return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
-class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
-    # Allow only authenticated users to access this url
-    permission_classes = (IsAuthenticated,)
+class PasswordChangeView(generics.UpdateAPIView):
     serializer_class = UserSerializer
 
-    def get(self, request, *args, **kwargs):
-        # serializer to handle turning our `User` object into something that
-        # can be JSONified and sent to the client.
-        serializer = self.serializer_class(request.user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def get_object(self):
+        return self.request.user
 
-    def put(self, request, *args, **kwargs):
-        serializer_data = request.data.get('user', {})
-        serializer = UserSerializer(
-            request.user, data=serializer_data, partial=True
-        )
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def update(self, request, *args, **kwargs):
+        user = self.get_object()
+        old_password = request.data.get('old_password')
+        new_password = request.data.get('new_password')
+
+        if not user.check_password(old_password):
+            return Response({'error': 'Incorrect old password'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            validate_password(new_password, user=user)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.set_password(new_password)
+        user.save()
+        return Response({'message': 'Password changed successfully'}, status=status.HTTP_200_OK)
+
+
+class PasswordResetView(APIView):
+    def post(self, request):
+        email = request.data.get('email')
+        try:
+            user = User.objects.get(email=email)
+            new_password = User.objects.make_random_password()
+            user.set_password(new_password)
+            user.save()
+            send_mail(
+                'Password Reset',
+                f'Your new password is: {new_password}',
+                'from@example.com',
+                [email],
+                fail_silently=False,
+            )
+            return Response({'message': 'Password reset email sent'}, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({'error': 'User with that email does not exist'}, status=status.HTTP_404_NOT_FOUND)
