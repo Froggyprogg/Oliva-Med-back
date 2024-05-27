@@ -33,6 +33,7 @@ ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split()
 # Application definition
 
 INSTALLED_APPS = [
+    'drf_spectacular',
     'corsheaders',
     'Oliva_pages',
     'Auth',
@@ -165,6 +166,12 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
-    ]
+    ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
-
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Oliva-Med Swagger API',
+    'DESCRIPTION': 'Oliva-Med Swagger',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+}

@@ -3,9 +3,9 @@ from rest_framework import status, generics
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from Oliva_pages.models import Doctor, MedicalService, Review, WorkSchedule, Job
+from Oliva_pages.models import Doctor, MedicalService, Review, WorkSchedule, Job, DoctorReview
 from Oliva_pages.serializers import ReviewSerializer, WorkScheduleSerializer, DoctorSerializer, \
-    MedicalServiceSerializer, JobSerializer
+    MedicalServiceSerializer, JobSerializer, DoctorReviewSerializer
 from .serializers import WorkScheduleSerializer
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
@@ -21,9 +21,20 @@ class ReviewCreateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ReviewsListView(generics.ListAPIView):
-    queryset = Review.objects.all()
-    serializer_class = ReviewSerializer
+class CreateDoctorReviewView(generics.CreateAPIView):
+    queryset = DoctorReview.objects.all()
+    serializer_class = DoctorReviewSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class DoctorReviewListView(generics.ListAPIView):
+    serializer_class = DoctorReviewSerializer
+
+    def get_queryset(self):
+        doctor_id = self.kwargs['doctor_id']
+        return DoctorReview.objects.filter(doctor_id=doctor_id)
 
 
 class DoctorListView(ListAPIView):

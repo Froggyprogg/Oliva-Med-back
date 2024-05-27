@@ -20,12 +20,14 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
-
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from Auth.views import PasswordResetView, PasswordChangeView, LoginView, UserCreateView
 from QA_Block.views import QuestionCreateView, QuestionsListView, QuestionDetailView, AnswerDetailView
-from Oliva_pages.views import ReviewCreateView, ReviewsListView, WorkScheduleListView, AppointmentCreateView, \
+from Oliva_pages.views import WorkScheduleListView, AppointmentCreateView, \
     WorkScheduleListViewWithFilter, AppointmentCreateViewWithFilter, DoctorListView, DoctorDetailView, \
-    MedicalServiceListView, JobListView, JobDetailView
+    MedicalServiceListView, JobListView, JobDetailView, CreateDoctorReviewView, DoctorReviewListView
+from django.contrib.auth.views import LogoutView
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -33,6 +35,7 @@ urlpatterns = [
     path('api/users/login/', LoginView.as_view(), name='login'),
     path('api/users/password-change/', PasswordChangeView.as_view(), name='password-change'),
     path('api/users/password-reset/', PasswordResetView.as_view(), name='password-reset'),
+    path('api/users/logout/', LogoutView.as_view(), name='logout'),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/questions/', QuestionsListView.as_view(), name='list_questions'),
@@ -44,12 +47,23 @@ urlpatterns = [
     path('api/doctor/<int:pk>/', DoctorDetailView.as_view(), name='doctor-detail'),
     path("api/jobs/", JobListView.as_view(), name="job-list"),
     path("api/job/<int:pk>/", JobDetailView.as_view(), name="job-detail"),
-    path("api/reviews/create", ReviewCreateView.as_view(),name="create_review"), #TODO: доработать функцию создния
-    path("api/reviews/list", ReviewsListView.as_view(),name="create_review"),
+    path("api/reviews/doctor/create", CreateDoctorReviewView.as_view(),name="create_review_doctor"),
+    path("api/reviews/doctor/<int:doctor_id>", DoctorReviewListView.as_view(),name="list_doctor_review"),
     path("api/work-schedule/", WorkScheduleListView.as_view(), name="work_schedule_list"),
     path("api/appointments/", AppointmentCreateView.as_view(), name="appointment_create"),
     path("api/work-schedule-filter/", WorkScheduleListViewWithFilter.as_view(), name="work_schedule_list_filter"),
     path("api/appointments-filter/", AppointmentCreateViewWithFilter.as_view(), name="appointment_create_filter"),
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path(
+        'api/schema/swagger-ui/',
+        SpectacularSwaggerView.as_view(url_name='schema'),
+        name='swagger-ui'
+    ),
+    path(
+        'api/schema/redoc/',
+        SpectacularRedocView.as_view(url_name='schema'),
+        name='redoc'
+    ),
 ]
 
 admin.site.site_header = 'Админ-панель Олива-Мед'

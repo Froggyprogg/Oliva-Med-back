@@ -5,8 +5,7 @@ from rest_framework import serializers
 class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
-        fields = ['id', 'slug', 'title', 'description', 'pub_date', 'user', 'closed']
-        read_only_fields = ['id', 'slug', 'pub_date']
+        fields = ['id', 'slug', 'title', 'description', 'pub_date', 'closed']
 
     def create(self, validated_data):
         user = self.context['request'].user

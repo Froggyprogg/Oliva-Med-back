@@ -50,11 +50,6 @@ class Doctor_videosSerializer(serializers.ModelSerializer):
         model = Doctor_videos
         fields = ['video']
 
-# class DoctorReviewSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = DoctorReview
-#         fields = ['name', 'price']
-
 
 class DoctorSerializer(serializers.ModelSerializer):
     education_photos = Doctor_eduaction_photoSerializer(many=True, read_only=True)
@@ -64,6 +59,32 @@ class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Doctor
         fields = ['last_name', 'first_name', 'middlename', 'phone_number', 'sex', 'main_photo', 'medical_service', 'education_photos', 'files', 'video']
+
+
+class DoctorReviewSerializer(serializers.ModelSerializer):
+    review = ReviewSerializer(read_only=True)
+    doctor = DoctorSerializer(read_only=True)
+
+    class Meta:
+        model = DoctorReview
+        fields = ['id', 'review', 'doctor']
+
+    def create(self, validated_data):
+        review = self.context['request'].data.get('review')
+        doctor = self.context['request'].data.get('doctor')
+
+        review_instance = Review.objects.create(
+            user=self.context['request'].user,
+            title=review['title'],
+            review_text=review['review_text']
+        )
+
+        doctor_instance = Doctor.objects.get(id=doctor)
+
+        return DoctorReview.objects.create(
+            review=review_instance,
+            doctor=doctor_instance
+        )
 
 
 class JobSerializer(serializers.ModelSerializer):
