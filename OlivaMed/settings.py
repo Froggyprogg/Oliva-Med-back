@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-)+*4f%p^v42@d1r=mlrfh(o@ewr5g2+dnltky3fwmd47z94a!('
 
 
-DEBUG = int(os.environ.get("DEBUG", default=0))
+DEBUG = True
 
 ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split()
 # Application definition
@@ -107,12 +107,12 @@ WSGI_APPLICATION = 'OlivaMed.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'oliva_med_back',
         'USER': 'django_admin',
         'PASSWORD': 'admin',
-        'HOST': 'postgres',
-        'PORT': '5432',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
 
