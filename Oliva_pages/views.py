@@ -3,16 +3,14 @@ from rest_framework import status, generics
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from Oliva_pages.models import Doctor, MedicalService, Review, WorkSchedule, Job, DoctorReview
-from Oliva_pages.serializers import ReviewSerializer, WorkScheduleSerializer, DoctorSerializer, \
-    MedicalServiceSerializer, JobSerializer, DoctorReviewSerializer
-from .serializers import WorkScheduleSerializer
-from rest_framework.filters import SearchFilter, OrderingFilter
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.exceptions import ValidationError
+from Oliva_pages.models import Doctor, MedicalService, Review, Job, JobAppointment, WorkSchedule
+from Oliva_pages.serializers import ReviewSerializer, DoctorSerializer, \
+    MedicalServiceSerializer, JobSerializer, JobAppointmentSerializer, CallbackSerializer, WorkScheduleSerializer
+from django.views.decorators.csrf import csrf_exempt
 
 
 class ReviewCreateView(APIView):
+
     def post(self, request):
         serializer = ReviewSerializer(data=request.data)
         if serializer.is_valid():
@@ -22,19 +20,11 @@ class ReviewCreateView(APIView):
 
 
 class CreateDoctorReviewView(generics.CreateAPIView):
-    queryset = DoctorReview.objects.all()
-    serializer_class = DoctorReviewSerializer
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-
-
-class DoctorReviewListView(generics.ListAPIView):
-    serializer_class = DoctorReviewSerializer
-
-    def get_queryset(self):
-        doctor_id = self.kwargs['doctor_id']
-        return DoctorReview.objects.filter(doctor_id=doctor_id)
 
 
 class DoctorListView(ListAPIView):
@@ -47,27 +37,6 @@ class DoctorDetailView(RetrieveAPIView):
     serializer_class = DoctorSerializer
 
 
-class WorkScheduleListView(ListAPIView):
-    queryset = WorkSchedule.objects.all()
-    serializer_class = WorkScheduleSerializer
-
-
-class WorkScheduleListViewWithFilter(ListAPIView): # TODO: Возможно так лучше использовать
-    queryset = WorkSchedule.objects.all()
-    serializer_class = WorkScheduleSerializer
-    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['doctor', 'date', 'is_available']
-    search_fields = ['doctor__first_name', 'doctor__last_name']
-    ordering_fields = ['date', 'start_time']
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        is_available = self.request.query_params.get('is_available', None)
-        if is_available is not None:
-            queryset = queryset.filter(is_available=is_available)
-        return queryset
-
-
 class AppointmentCreateView(CreateAPIView):
     queryset = WorkSchedule.objects.all()
     serializer_class = WorkScheduleSerializer
@@ -78,38 +47,15 @@ class AppointmentCreateView(CreateAPIView):
         work_schedule.save()
 
 
-class AppointmentCreateViewWithFilter(CreateAPIView): # TODO: Возможно так лучше использовать
-    queryset = WorkSchedule.objects.all()
-    serializer_class = WorkScheduleSerializer
-
-    def perform_create(self, serializer):
-        doctor = serializer.validated_data['doctor']
-        date = serializer.validated_data['date']
-        start_time = serializer.validated_data['start_time']
-        end_time = serializer.validated_data['end_time']
-
-
-        if WorkSchedule.objects.filter(doctor=doctor, date=date, start_time=start_time, end_time=end_time).exists():
-            raise ValidationError("Это время уже занято.")
-
-        work_schedule = serializer.save()
-        work_schedule.is_available = False
-        work_schedule.save()
-
-
-# def list_news(request):
-#     news = News.objects.all()
-#     args = {'questions': news}
-
-
 class MedicalServiceListView(ListAPIView):
     queryset = MedicalService.objects.all()
     serializer_class = MedicalServiceSerializer
 
+    def list(self, request, *args, **kwargs):
+        response = super(MedicalServiceListView, self).list(request, *args, **kwargs)
+        response['Access-Control-Allow-Origin'] = '*'
+        return response
 
-# def list_calendarevents(request):
-#     events = CalendarEvents.objects.all()
-#     args = {'questions': events}
 
 class JobListView(ListAPIView):
     queryset = Job.objects.all()
@@ -119,3 +65,19 @@ class JobListView(ListAPIView):
 class JobDetailView(RetrieveAPIView):
     queryset = Job.objects.all()
     serializer_class = JobSerializer
+
+
+class CallbackView(generics.CreateAPIView):
+    serializer_class = CallbackSerializer
+
+    @csrf_exempt
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+
+class JobAppointmentView(generics.CreateAPIView):
+    serializer_class = JobAppointmentSerializer
+
+    @csrf_exempt
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)

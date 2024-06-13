@@ -13,7 +13,6 @@ class UserQAProfile(models.Model):
 
 
 class Question(models.Model):
-    slug = models.SlugField(max_length=200)
     title = models.CharField(max_length=200, blank=False)
     description = models.TextField(help_text="Введите Вопрос",
                                    verbose_name="Вопрос",
@@ -32,7 +31,7 @@ class Question(models.Model):
 
 
 class Answer(models.Model):
-    question = models.ForeignKey(Question, on_delete=models.SET_NULL, null=True, blank=True,)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='answers')
     answer_text = models.TextField(help_text="Введите Ответ",
                                    verbose_name="Ответ",
                                    default="Ответ")

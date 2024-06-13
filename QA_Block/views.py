@@ -17,10 +17,5 @@ class QuestionCreateView(generics.CreateAPIView):
 class QuestionDetailView(RetrieveAPIView):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
-    lookup_field = 'slug'
 
 
-class AnswerDetailView(ListAPIView):
-    queryset = Question.objects.all()
-    serializer_class = QuestionSerializer
-    lookup_field = 'question'

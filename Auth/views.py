@@ -1,27 +1,39 @@
 from rest_framework import generics, status
 from rest_framework.response import Response
-from rest_framework.views import APIView
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.password_validation import validate_password
 from django.core.mail import send_mail
-from .serializers import UserSerializer, UserProfileSerializer
+from .serializers import UserSerializer, LoginSerializer, PasswordResetSerializer
 from django.contrib.auth.models import User
+from django.views.decorators.csrf import csrf_exempt
 
 
 class UserCreateView(generics.CreateAPIView):
-    serializer_class = UserProfileSerializer
+    serializer_class = UserSerializer
+
+    @csrf_exempt
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
 
 
-class LoginView(APIView):
+class LoginView(generics.CreateAPIView):
+    serializer_class = LoginSerializer
+
     def post(self, request):
-        username = request.data.get('username')
-        password = request.data.get('password')
+        serializer = LoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        username = serializer.validated_data['username']
+        password = serializer.validated_data['password']
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
             return Response({'message': 'Logged in successfully'}, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+
+    @csrf_exempt
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
 
 
 class PasswordChangeView(generics.UpdateAPIView):
@@ -48,7 +60,9 @@ class PasswordChangeView(generics.UpdateAPIView):
         return Response({'message': 'Password changed successfully'}, status=status.HTTP_200_OK)
 
 
-class PasswordResetView(APIView):
+class PasswordResetView(generics.CreateAPIView):
+    serializer_class = PasswordResetSerializer
+
     def post(self, request):
         email = request.data.get('email')
         try:
@@ -59,10 +73,13 @@ class PasswordResetView(APIView):
             send_mail(
                 'Password Reset',
                 f'Your new password is: {new_password}',
-                'from@example.com',
+                'oliva.med.rnd@gmail.com',
                 [email],
                 fail_silently=False,
             )
             return Response({'message': 'Password reset email sent'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': f'Failed to send password reset email: {str(e)}'},
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except User.DoesNotExist:
             return Response({'error': 'User with that email does not exist'}, status=status.HTTP_404_NOT_FOUND)

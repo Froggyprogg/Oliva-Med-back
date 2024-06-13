@@ -20,13 +20,17 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
+from django.conf.urls.static import static
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from Auth.views import PasswordResetView, PasswordChangeView, LoginView, UserCreateView
-from QA_Block.views import QuestionCreateView, QuestionsListView, QuestionDetailView, AnswerDetailView
-from Oliva_pages.views import WorkScheduleListView, AppointmentCreateView, \
-    WorkScheduleListViewWithFilter, AppointmentCreateViewWithFilter, DoctorListView, DoctorDetailView, \
-    MedicalServiceListView, JobListView, JobDetailView, CreateDoctorReviewView, DoctorReviewListView
+from OlivaMed import settings
+from QA_Block.views import QuestionCreateView, QuestionsListView, QuestionDetailView
+from Oliva_pages.views import \
+    DoctorListView, DoctorDetailView, \
+    MedicalServiceListView, JobListView, JobDetailView, CreateDoctorReviewView, \
+    JobAppointmentView, CallbackView, AppointmentCreateView
 from django.contrib.auth.views import LogoutView
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 
 urlpatterns = [
@@ -40,19 +44,16 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/questions/', QuestionsListView.as_view(), name='list_questions'),
     path("api/questions/create", QuestionCreateView.as_view(), name="create_question"),
-    path("api/question/<slug:slug>/", QuestionDetailView.as_view(), name="question_detail"),
-    path("api/answer/<str:question>/", AnswerDetailView.as_view(), name="answer_detail"),
+    path("api/question/<int:pk>/", QuestionDetailView.as_view(), name="question_detail"),
     path('api/medicalservices/', MedicalServiceListView.as_view(), name='medicalservice-list'),
     path('api/doctors/', DoctorListView.as_view(), name='doctor-list'),
     path('api/doctor/<int:pk>/', DoctorDetailView.as_view(), name='doctor-detail'),
     path("api/jobs/", JobListView.as_view(), name="job-list"),
     path("api/job/<int:pk>/", JobDetailView.as_view(), name="job-detail"),
+    path("api/job/appointment/", JobAppointmentView.as_view(), name="job-appointment"),
+    path("api/callback/", CallbackView.as_view(), name="callback"),
     path("api/reviews/doctor/create", CreateDoctorReviewView.as_view(),name="create_review_doctor"),
-    path("api/reviews/doctor/<int:doctor_id>", DoctorReviewListView.as_view(),name="list_doctor_review"),
-    path("api/work-schedule/", WorkScheduleListView.as_view(), name="work_schedule_list"),
     path("api/appointments/", AppointmentCreateView.as_view(), name="appointment_create"),
-    path("api/work-schedule-filter/", WorkScheduleListViewWithFilter.as_view(), name="work_schedule_list_filter"),
-    path("api/appointments-filter/", AppointmentCreateViewWithFilter.as_view(), name="appointment_create_filter"),
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path(
         'api/schema/swagger-ui/',
